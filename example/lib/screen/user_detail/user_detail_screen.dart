@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:icapps_generator_example/viewmodel/user_detail/user_detail_viewmodel.dart';
-import 'package:kiwi/kiwi.dart' as kiwi;
 import 'package:provider/provider.dart';
 
 class UserDetailScreen extends StatelessWidget implements UserDetailNavigator {

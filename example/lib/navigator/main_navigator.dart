@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:icapps_generator_example/screen/testing/testing_screen.dart';
 import 'package:icapps_generator_example/screen/user_detail/user_detail_screen.dart';
-import 'package:icapps_generator_example/widgets/general/flavor_banner.dart';
+import 'package:icapps_generator_example/widget/general/flavor_banner.dart';
 
 class MainNavigatorWidget extends StatefulWidget {
-  const MainNavigatorWidget({Key key}) : super(key: key);
+  const MainNavigatorWidget({Key? key}) : super(key: key);
 
   @override
   MainNavigatorWidgetState createState() => MainNavigatorWidgetState();
 
   static MainNavigatorWidgetState of(context, {rootNavigator = false, nullOk = false}) {
-    final MainNavigatorWidgetState navigator = rootNavigator;
+    final navigator = rootNavigator;
     assert(() {
       if (navigator == null && !nullOk) {
         throw FlutterError('MainNavigatorWidget operation requested with a context that does not include a MainNavigatorWidget.\n'
@@ -38,7 +38,7 @@ class MainNavigatorWidgetState extends State<MainNavigatorWidget> {
     );
   }
 
-  Route onGenerateRoute(RouteSettings settings) {
+  Route? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case UserDetailScreen.routeName:
         return MaterialPageRoute(builder: (context) => FlavorBanner(child: UserDetailScreen()), settings: settings);
@@ -49,13 +49,13 @@ class MainNavigatorWidgetState extends State<MainNavigatorWidget> {
     }
   }
 
-  Future<bool> _willPop() async => !await navigationKey.currentState.maybePop();
+  Future<bool> _willPop() async => !await navigationKey.currentState!.maybePop();
 
-  void goToUserDetail() => navigationKey.currentState.pushReplacementNamed(UserDetailScreen.routeName);
+  void goToUserDetail() => navigationKey.currentState?.pushReplacementNamed(UserDetailScreen.routeName);
 
-  void goToTesting() => navigationKey.currentState.pushReplacementNamed(TestingScreen.routeName);
+  void goToTesting() => navigationKey.currentState?.pushReplacementNamed(TestingScreen.routeName);
 
   void closeDialog() => Navigator.of(context, rootNavigator: true).pop();
 
-  void goBack<T>({result}) => navigationKey.currentState.pop(result);
+  void goBack<T>({result}) => navigationKey.currentState!.pop(result);
 }

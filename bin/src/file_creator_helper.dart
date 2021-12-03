@@ -16,7 +16,7 @@ class FileCreatorHelper {
       ..writeln()
       ..writeln('@injectable')
       ..writeln('class ${CaseUtil.getCamelcase(screenName)}ViewModel with ChangeNotifierEx{')
-      ..writeln('  ${CaseUtil.getCamelcase(screenName)}Navigator _navigator;')
+      ..writeln('  late final ${CaseUtil.getCamelcase(screenName)}Navigator _navigator;')
       ..writeln()
       ..writeln('  Future<void> init(${CaseUtil.getCamelcase(screenName)}Navigator navigator) async {')
       ..writeln('    _navigator = navigator;')
@@ -44,9 +44,9 @@ class FileCreatorHelper {
       ..writeln('    return ProviderWidget<${CaseUtil.getCamelcase(screenName)}ViewModel>(')
       ..writeln('      create: () => GetIt.I.get()..init(this),')
       ..writeln('      childBuilderWithViewModel: (context, viewModel, theme, localization) => Scaffold(')
-      ..writeln('          body: Center(),')
-      ..writeln('       ),')
-      ..writeln('     );')
+      ..writeln('        body: Center(),')
+      ..writeln('      ),')
+      ..writeln('    );')
       ..writeln('  }')
       ..writeln('}');
 
@@ -76,7 +76,7 @@ class FileCreatorHelper {
       }
       if (l == '  void closeDialog() => Navigator.of(context, rootNavigator: true).pop();') {
         sb
-          ..writeln('  void goTo${CaseUtil.getCamelcase(screenName)}() => navigationKey.currentState.pushNamed(${CaseUtil.getCamelcase(screenName)}Screen.routeName);')
+          ..writeln('  void goTo${CaseUtil.getCamelcase(screenName)}() => navigationKey.currentState?.pushNamed(${CaseUtil.getCamelcase(screenName)}Screen.routeName);')
           ..writeln();
       }
       if (l != "import 'package:$projectName/widgets/general/flavor_banner.dart';") {

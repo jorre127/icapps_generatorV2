@@ -7,11 +7,11 @@ import 'src/flutter_helper.dart';
 import 'src/params.dart';
 
 var screenName = '';
-Params params;
+Params? params;
 const NO_NAV_ARG = '--no-nav';
 const NO_GETIT_ARG = '--no-getIt';
 
-Future<void> main(List<String> args) async {
+Future<void> main(List<String>? args) async {
   final pubspecYaml = File(join(Directory.current.path, 'pubspec.yaml'));
   if (!pubspecYaml.existsSync()) {
     throw Exception('This program should be run from the root of a flutter/dart project');
@@ -25,8 +25,8 @@ Future<void> main(List<String> args) async {
   if (screenName.isEmpty) {
     throw Exception('Screenname is empty.');
   }
-  String arg2;
-  String arg3;
+  var arg2 = '';
+  var arg3 = '';
   if (args.length > 1) {
     arg2 = args[1];
   }
@@ -47,7 +47,7 @@ Future<void> main(List<String> args) async {
   createFolders();
   createFiles();
   if (generateNav) {
-    await FileCreatorHelper.updateMainNavigator(params.projectName, screenName);
+    await FileCreatorHelper.updateMainNavigator(params!.projectName!, screenName);
   }
   print('');
   if (generateGetIt) {
@@ -94,5 +94,5 @@ void createFiles() {
   viewModelFile.createSync(recursive: true);
 
   FileCreatorHelper.createViewModelFile(screenName);
-  FileCreatorHelper.createScreenFile(params.projectName, screenName);
+  FileCreatorHelper.createScreenFile(params!.projectName!, screenName);
 }
