@@ -10,7 +10,6 @@ class FileCreatorHelper {
 
   static void createViewModelFile(String screenName) {
     final sb = StringBuffer()
-      ..writeln("import 'package:flutter/material.dart';")
       ..writeln("import 'package:icapps_architecture/icapps_architecture.dart';")
       ..writeln("import 'package:injectable/injectable.dart';")
       ..writeln()
@@ -43,7 +42,7 @@ class FileCreatorHelper {
       ..writeln('  Widget build(BuildContext context) {')
       ..writeln('    return ProviderWidget<${CaseUtil.getCamelcase(screenName)}ViewModel>(')
       ..writeln('      create: () => GetIt.I.get()..init(this),')
-      ..writeln('      childBuilderWithViewModel: (context, viewModel, theme, localization) => Scaffold(')
+      ..writeln('      childBuilderWithViewModel: (context, viewModel, theme, localization) => const Scaffold(')
       ..writeln('        body: Center(),')
       ..writeln('      ),')
       ..writeln('    );')
@@ -66,7 +65,7 @@ class FileCreatorHelper {
       ..writeln("import 'package:$projectName/widget/general/flavor_banner.dart';");
     var writeOnGenerateRoute = false;
     await mainNavigatorFile.openRead().transform(const Utf8Decoder()).transform(const LineSplitter()).forEach((l) {
-      if (l == '  Route onGenerateRoute(RouteSettings settings) {') {
+      if (l == '  Route? onGenerateRoute(RouteSettings settings) {') {
         writeOnGenerateRoute = true;
       }
       if (l == '      default:' && writeOnGenerateRoute) {
@@ -74,7 +73,7 @@ class FileCreatorHelper {
           ..writeln('      case ${CaseUtil.getCamelcase(screenName)}Screen.routeName:')
           ..writeln('        return MaterialPageRoute(builder: (context) => FlavorBanner(child: ${CaseUtil.getCamelcase(screenName)}Screen()), settings: settings);');
       }
-      if (l == '  void closeDialog() => Navigator.of(context, rootNavigator: true).pop();') {
+      if (l == '   void closeDialog<T>({T? result}) => Navigator.of(context, rootNavigator: true).pop(result);') {
         sb
           ..writeln('  void goTo${CaseUtil.getCamelcase(screenName)}() => navigationKey.currentState?.pushNamed(${CaseUtil.getCamelcase(screenName)}Screen.routeName);')
           ..writeln();
