@@ -45,9 +45,8 @@ class FileCreatorHelper {
       ..writeln('      create: () => GetIt.I.get()..init(this),')
       ..writeln('      childBuilderWithViewModel: (context, viewModel, theme, localization) => Scaffold(')
       ..writeln('          body: Center(),')
-      ..writeln('        ),')
-      ..writeln('      ),')
-      ..writeln('    );')
+      ..writeln('       ),')
+      ..writeln('     );')
       ..writeln('  }')
       ..writeln('}');
 
