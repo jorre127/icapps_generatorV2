@@ -1,7 +1,7 @@
-import 'package:icapps_generator_example/screen/testing/testing_screen.dart';
-import 'package:icapps_generator_example/widgets/general/flavor_banner.dart';
 import 'package:flutter/material.dart';
+import 'package:icapps_generator_example/screen/testing/testing_screen.dart';
 import 'package:icapps_generator_example/screen/user_detail/user_detail_screen.dart';
+import 'package:icapps_generator_example/widgets/general/flavor_banner.dart';
 
 class MainNavigatorWidget extends StatefulWidget {
   const MainNavigatorWidget({Key key}) : super(key: key);
@@ -10,13 +10,7 @@ class MainNavigatorWidget extends StatefulWidget {
   MainNavigatorWidgetState createState() => MainNavigatorWidgetState();
 
   static MainNavigatorWidgetState of(context, {rootNavigator = false, nullOk = false}) {
-    final MainNavigatorWidgetState navigator = rootNavigator
-        ? context.rootAncestorStateOfType(
-            const TypeMatcher<MainNavigatorWidgetState>(),
-          )
-        : context.ancestorStateOfType(
-            const TypeMatcher<MainNavigatorWidgetState>(),
-          );
+    final MainNavigatorWidgetState navigator = rootNavigator;
     assert(() {
       if (navigator == null && !nullOk) {
         throw FlutterError('MainNavigatorWidget operation requested with a context that does not include a MainNavigatorWidget.\n'

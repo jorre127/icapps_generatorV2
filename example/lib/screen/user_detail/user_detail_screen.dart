@@ -10,11 +10,11 @@ class UserDetailScreen extends StatelessWidget implements UserDetailNavigator {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<UserDetailViewModel>(
       child: Consumer<UserDetailViewModel>(
-        builder: (context, value, child) => Scaffold(
+        builder: (context, value, child) => const Scaffold(
           body: Center(),
         ),
       ),
-      builder: (context) => kiwi.Container().resolve()..init(this),
+      create: (context) => kiwi.Container().resolve()..init(this),
     );
   }
 }
