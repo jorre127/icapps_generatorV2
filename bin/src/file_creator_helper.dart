@@ -64,6 +64,7 @@ class FileCreatorHelper {
       ..writeln("import 'package:$projectName/screen/$screenName/${screenName}_screen.dart';")
       ..writeln("import 'package:$projectName/widget/general/flavor_banner.dart';");
     var writeOnGenerateRoute = false;
+    var overrideMissing = false;
     await mainNavigatorFile.openRead().transform(const Utf8Decoder()).transform(const LineSplitter()).forEach((l) {
       if (l == '  Route? onGenerateRoute(RouteSettings settings) {') {
         writeOnGenerateRoute = true;
@@ -73,15 +74,42 @@ class FileCreatorHelper {
           ..writeln('      case ${CaseUtil.getCamelcase(screenName)}Screen.routeName:')
           ..writeln('        return MaterialPageRoute(builder: (context) => FlavorBanner(child: ${CaseUtil.getCamelcase(screenName)}Screen()), settings: settings);');
       }
-      if (l == '   void closeDialog<T>({T? result}) => Navigator.of(context, rootNavigator: true).pop(result);') {
+      if (l == '  void closeDialog<T>({T? result}) => Navigator.of(context, rootNavigator: true).pop(result);') {
+        overrideMissing = true;
         sb
           ..writeln('  void goTo${CaseUtil.getCamelcase(screenName)}() => navigationKey.currentState?.pushNamed(${CaseUtil.getCamelcase(screenName)}Screen.routeName);')
           ..writeln();
       }
       if (l != "import 'package:$projectName/widgets/general/flavor_banner.dart';") {
-        sb.writeln(l);
+        if (overrideMissing) {
+          overrideMissing = false;
+          sb
+            ..writeln('  @override')
+            ..writeln(l);
+        } else {
+          sb.writeln(l);
+        }
       }
     }).whenComplete(() {});
     mainNavigatorFile.writeAsStringSync(sb.toString());
+  }
+
+  static Future<void> updateMainNavigation(String projectName, String screenName) async {
+    final mainNavigationFile = File(join('lib', 'navigator', 'main_navigation.dart'));
+    if (!mainNavigationFile.existsSync()) {
+      print('`lib/navigator/main_navigation.dart` does not exists. Can not add navigation logic.');
+      return;
+    }
+
+    final sb = StringBuffer();
+    await mainNavigationFile.openRead().transform(const Utf8Decoder()).transform(const LineSplitter()).forEach((l) {
+      sb.writeln(l);
+      if (l == '  void goBack<T>({T? result});') {
+        sb
+          ..writeln()
+          ..writeln('  void goTo${CaseUtil.getCamelcase(screenName)}();');
+      }
+    }).whenComplete(() {});
+    mainNavigationFile.writeAsStringSync(sb.toString());
   }
 }

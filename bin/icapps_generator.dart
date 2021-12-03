@@ -48,6 +48,7 @@ Future<void> main(List<String>? args) async {
   createFiles();
   if (generateNav) {
     await FileCreatorHelper.updateMainNavigator(params!.projectName!, screenName);
+    await FileCreatorHelper.updateMainNavigation(params!.projectName!, screenName);
   }
   print('');
   if (generateGetIt) {
