@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:icapps_architecture/icapps_architecture.dart';
+import 'package:injectable/injectable.dart';
 
-class UserDetailViewModel with ChangeNotifier {
+@injectable
+class UserDetailViewModel with ChangeNotifierEx{
   late final UserDetailNavigator _navigator;
 
   Future<void> init(UserDetailNavigator navigator) async {

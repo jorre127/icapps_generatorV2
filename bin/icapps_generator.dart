@@ -9,7 +9,8 @@ import 'src/params.dart';
 var screenName = '';
 Params? params;
 const NO_NAV_ARG = '--no-nav';
-const NO_GETIT_ARG = '--no-getIt';
+const NO_DI_ARG = '--no-di';
+const MAX_ARGUMENTS_COUNT = 3;
 
 Future<void> main(List<String>? args) async {
   final pubspecYaml = File(join(Directory.current.path, 'pubspec.yaml'));
@@ -18,15 +19,15 @@ Future<void> main(List<String>? args) async {
   }
   if (args == null || args.isEmpty) {
     throw Exception('No arguments provided. 1 argument is required.');
-  } else if (args.length > 3) {
+  } else if (args.length > MAX_ARGUMENTS_COUNT) {
     throw Exception('${args.length} arguments are provided. Only 1 is allowed');
   }
   screenName = args[0];
   if (screenName.isEmpty) {
     throw Exception('Screenname is empty.');
   }
-  var arg2 = '';
-  var arg3 = '';
+  String? arg2;
+  String? arg3;
   if (args.length > 1) {
     arg2 = args[1];
   }
@@ -35,23 +36,23 @@ Future<void> main(List<String>? args) async {
   }
 
   final generateNav = arg2 != NO_NAV_ARG && arg3 != NO_NAV_ARG;
-  final generateGetIt = arg2 != NO_GETIT_ARG && arg3 != NO_GETIT_ARG;
+  final generateInjectable = arg2 != NO_DI_ARG && arg3 != NO_DI_ARG;
 
   await parsePubspec(pubspecYaml);
   print('Options:');
   print('Generate MainNavigator: $generateNav');
-  print('Generate GetIt Dependency Tree: $generateGetIt');
+  print('Generate GetIt Dependency Tree: $generateInjectable');
   print('\n');
   print('\n');
   print('Generating a new screen called `$screenName`');
   createFolders();
-  createFiles();
+  createFiles(generateInjectable: generateInjectable);
   if (generateNav) {
     await FileCreatorHelper.updateMainNavigator(params!.projectName!, screenName);
     await FileCreatorHelper.updateMainNavigation(params!.projectName!, screenName);
   }
   print('');
-  if (generateGetIt) {
+  if (generateInjectable) {
     print('Generate GetIt tree...');
     await FlutterHelper.regenerateGetIt();
   }
@@ -79,7 +80,7 @@ void createFolders() {
   }
 }
 
-void createFiles() {
+void createFiles({required bool generateInjectable}) {
   final screenFile = File(join('lib', 'screen', screenName, '${screenName}_screen.dart'));
   final viewModelFile = File(join('lib', 'viewmodel', screenName, '${screenName}_viewmodel.dart'));
 
@@ -94,6 +95,6 @@ void createFiles() {
   print('Create `lib/viewmodel/${screenName}_viewmodel.dart`');
   viewModelFile.createSync(recursive: true);
 
-  FileCreatorHelper.createViewModelFile(screenName);
+  FileCreatorHelper.createViewModelFile(screenName, generateInjectable:generateInjectable);
   FileCreatorHelper.createScreenFile(params!.projectName!, screenName);
 }

@@ -8,12 +8,17 @@ import 'case_util.dart';
 class FileCreatorHelper {
   FileCreatorHelper._();
 
-  static void createViewModelFile(String screenName) {
-    final sb = StringBuffer()
-      ..writeln("import 'package:icapps_architecture/icapps_architecture.dart';")
-      ..writeln("import 'package:injectable/injectable.dart';")
-      ..writeln()
-      ..writeln('@injectable')
+  static void createViewModelFile(String screenName, {required bool generateInjectable}) {
+    final sb = StringBuffer()..writeln("import 'package:icapps_architecture/icapps_architecture.dart';");
+    if (generateInjectable) {
+      sb
+        ..writeln("import 'package:injectable/injectable.dart';")
+        ..writeln()
+        ..writeln('@injectable');
+    } else {
+      sb.writeln();
+    }
+    sb
       ..writeln('class ${CaseUtil.getCamelcase(screenName)}ViewModel with ChangeNotifierEx{')
       ..writeln('  late final ${CaseUtil.getCamelcase(screenName)}Navigator _navigator;')
       ..writeln()
@@ -31,13 +36,21 @@ class FileCreatorHelper {
   static void createScreenFile(String projectName, String screenName) {
     final sb = StringBuffer()
       ..writeln("import 'package:$projectName/viewmodel/$screenName/${screenName}_viewmodel.dart';")
+      ..writeln("import 'package:$projectName/widget/provider/provider_widget.dart';")
       ..writeln("import 'package:get_it/get_it.dart';")
       ..writeln("import 'package:flutter/material.dart';")
-      ..writeln("import 'package:$projectName/widget/provider/provider_widget.dart';")
       ..writeln()
-      ..writeln('class ${CaseUtil.getCamelcase(screenName)}Screen extends StatelessWidget implements ${CaseUtil.getCamelcase(screenName)}Navigator {')
+      ..writeln('class ${CaseUtil.getCamelcase(screenName)}Screen extends StatefulWidget {')
       ..writeln("  static const String routeName = '$screenName';")
       ..writeln()
+      ..writeln('  const ${CaseUtil.getCamelcase(screenName)}Screen({Key? key}) : super(key: key);')
+      ..writeln()
+      ..writeln('  @override')
+      ..writeln('  _${CaseUtil.getCamelcase(screenName)}ScreenState createState() => _${CaseUtil.getCamelcase(screenName)}ScreenState();')
+      ..writeln('}')
+      ..writeln()
+      ..writeln(
+          'class _${CaseUtil.getCamelcase(screenName)}ScreenState extends State<${CaseUtil.getCamelcase(screenName)}Screen> implements ${CaseUtil.getCamelcase(screenName)}Navigator {')
       ..writeln('  @override')
       ..writeln('  Widget build(BuildContext context) {')
       ..writeln('    return ProviderWidget<${CaseUtil.getCamelcase(screenName)}ViewModel>(')
@@ -72,7 +85,7 @@ class FileCreatorHelper {
       if (l == '      default:' && writeOnGenerateRoute) {
         sb
           ..writeln('      case ${CaseUtil.getCamelcase(screenName)}Screen.routeName:')
-          ..writeln('        return MaterialPageRoute(builder: (context) => FlavorBanner(child: ${CaseUtil.getCamelcase(screenName)}Screen()), settings: settings);');
+          ..writeln('        return MaterialPageRoute(builder: (context) => const FlavorBanner(child: ${CaseUtil.getCamelcase(screenName)}Screen()), settings: settings);');
       }
       if (l == '  void closeDialog<T>({T? result}) => Navigator.of(context, rootNavigator: true).pop(result);') {
         overrideMissing = true;

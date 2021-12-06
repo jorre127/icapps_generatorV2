@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icapps_generator_example/navigator/main_navigation.dart';
 import 'package:icapps_generator_example/screen/testing/testing_screen.dart';
 import 'package:icapps_generator_example/screen/user_detail/user_detail_screen.dart';
 import 'package:icapps_generator_example/widget/general/flavor_banner.dart';
@@ -9,21 +10,21 @@ class MainNavigatorWidget extends StatefulWidget {
   @override
   MainNavigatorWidgetState createState() => MainNavigatorWidgetState();
 
-  static MainNavigatorWidgetState of(context, {rootNavigator = false, nullOk = false}) {
-    final navigator = rootNavigator;
+  static MainNavigationMixin of(BuildContext context, {bool rootNavigator = false}) {
+    final navigator = rootNavigator ? context.findRootAncestorStateOfType<MainNavigationMixin>() : context.findAncestorStateOfType<MainNavigationMixin>();
     assert(() {
-      if (navigator == null && !nullOk) {
-        throw FlutterError('MainNavigatorWidget operation requested with a context that does not include a MainNavigatorWidget.\n'
-            'The context used to push or pop routes from the MainNavigatorWidget must be that of a '
+      if (navigator == null) {
+        throw FlutterError('MainNavigation operation requested with a context that does not include a MainNavigation.\n'
+            'The context used to push or pop routes from the MainNavigation must be that of a '
             'widget that is a descendant of a MainNavigatorWidget widget.');
       }
       return true;
     }());
-    return navigator;
+    return navigator!;
   }
 }
 
-class MainNavigatorWidgetState extends State<MainNavigatorWidget> {
+class MainNavigatorWidgetState extends State<MainNavigatorWidget> with MainNavigationMixin {
   final GlobalKey<NavigatorState> navigationKey = GlobalKey<NavigatorState>();
 
   @override
@@ -41,21 +42,31 @@ class MainNavigatorWidgetState extends State<MainNavigatorWidget> {
   Route? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case UserDetailScreen.routeName:
-        return MaterialPageRoute(builder: (context) => FlavorBanner(child: UserDetailScreen()), settings: settings);
+        return MaterialPageRoute(builder: (context) => const FlavorBanner(child: UserDetailScreen()), settings: settings);
       case TestingScreen.routeName:
-        return MaterialPageRoute(builder: (context) => FlavorBanner(child: TestingScreen()), settings: settings);
+        return MaterialPageRoute(builder: (context) => const FlavorBanner(child: TestingScreen()), settings: settings);
       default:
         return null;
     }
   }
 
-  Future<bool> _willPop() async => !await navigationKey.currentState!.maybePop();
+  Future<bool> _willPop() async {
+    final navigationState = navigationKey.currentState;
+    if (navigationState == null) {
+      return false;
+    }
+    return !await navigationState.maybePop();
+  }
 
-  void goToUserDetail() => navigationKey.currentState?.pushReplacementNamed(UserDetailScreen.routeName);
+  @override
+  void goToUserDetail() => navigationKey.currentState?.pushNamed(UserDetailScreen.routeName);
 
-  void goToTesting() => navigationKey.currentState?.pushReplacementNamed(TestingScreen.routeName);
+  @override
+  void goToTesting() => navigationKey.currentState?.pushNamed(TestingScreen.routeName);
 
+  @override
   void closeDialog<T>({T? result}) => Navigator.of(context, rootNavigator: true).pop(result);
-
-  void goBack<T>({result}) => navigationKey.currentState!.pop(result);
+  
+  @override
+  void goBack<T>({T? result}) => navigationKey.currentState?.pop(result);
 }
